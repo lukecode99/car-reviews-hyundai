@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hyundai Review Scores — Editorial Aggregator</title>
+<style>
+  :root {
+    --bg: #0d0e1a;
+    --surface: #161728;
+    --surface2: #1e1f35;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f0f8;
+    --muted: rgba(255,255,255,0.45);
+    --accent: #3d6bff;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --hyundai: #002c5f;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+  header {
+    background: linear-gradient(135deg, #001a3d 0%, #002c5f 50%, #003d80 100%);
+    padding: 36px 24px 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  header .brand {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 10px;
+  }
+  header .brand svg { flex-shrink: 0; }
+  header h1 {
+    font-size: clamp(22px, 5vw, 34px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  header p {
+    color: rgba(255,255,255,0.65);
+    font-size: 14px;
+    margin-top: 6px;
+    max-width: 520px;
+    line-height: 1.5;
+  }
+  .sources-bar {
+    margin-top: 16px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .source-badge {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+  }
+  .controls {
+    padding: 18px 20px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .sort-label { font-size: 13px; color: var(--muted); }
+  .sort-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    transition: all 0.15s;
+  }
+  .sort-btn.active, .sort-btn:hover { color: var(--text); border-color: var(--accent); background: rgba(61,107,255,0.12); }
+  .cards {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .card:hover { border-color: rgba(61,107,255,0.35); transform: translateY(-1px); }
+  .card-top {
+    display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .car-name { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; flex: 1; min-width: 120px; }
+  .rank { color: var(--muted); font-size: 13px; font-weight: 700; margin-top: 2px; }
+  .score-block { text-align: right; flex-shrink: 0; }
+  .score-big {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .score-big.great { color: var(--green); }
+  .score-big.good { color: #86efac; }
+  .score-big.ok { color: var(--amber); }
+  .score-big.weak { color: var(--red); }
+  .score-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .score-bar-wrap {
+    background: rgba(255,255,255,0.07);
+    border-radius: 4px;
+    height: 5px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .score-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .summary {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.55;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  .source-scores {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .source-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 12px;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .source-chip:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); }
+  .source-chip .src-name { color: var(--muted); font-weight: 500; }
+  .source-chip .src-score { color: var(--text); }
+  .source-chip.na { opacity: 0.4; cursor: default; }
+  .source-chip.na:hover { border-color: var(--border); background: var(--surface2); }
+  .review-count {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-left: auto;
+    align-self: center;
+    white-space: nowrap;
+  }
+  footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  @media (max-width: 480px) {
+    .card { padding: 16px; }
+    .score-big { font-size: 26px; }
+    .car-name { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="rgba(255,255,255,0.12)"/>
+      <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="14" font-weight="800">H</text>
+    </svg>
+    <h1>Hyundai Reviews</h1>
+  </div>
+  <p>Editorial scores aggregated from UK's leading car publications — normalised to a common 10-point scale.</p>
+  <div class="sources-bar">
+    <span class="source-badge">Autocar /10</span>
+    <span class="source-badge">Auto Express /5</span>
+    <span class="source-badge">Parkers /5</span>
+  </div>
+</header>
+
+<div class="controls">
+  <span class="sort-label">Sort by:</span>
+  <button class="sort-btn active" onclick="sort('score')">Score</button>
+  <button class="sort-btn" onclick="sort('name')">Name A–Z</button>
+  <button class="sort-btn" onclick="sort('reviews')">Most reviewed</button>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<footer>
+  Scores sourced from <a href="https://www.autocar.co.uk" target="_blank">Autocar</a>,
+  <a href="https://www.autoexpress.co.uk" target="_blank">Auto Express</a> and
+  <a href="https://www.parkers.co.uk" target="_blank">Parkers</a>.<br>
+  All editorial scores belong to their respective publishers. This site links to original reviews.
+</footer>
+
+<script>
+const DATA = [{"name":"Ioniq 5","avgScore":0.85,"reviewCount":2,"reviews":[{"source":"Autocar","score":"8/10","normalised":0.8,"url":"https://www.autocar.co.uk/car-review/hyundai/ioniq-5"},{"source":"Auto Express","score":"4.5/5","normalised":0.9,"url":"https://www.autoexpress.co.uk/hyundai/ioniq-5"},{"source":"Parkers","score":null,"normalised":null,"url":"https://www.parkers.co.uk/hyundai/ioniq-5/hatchback/review/"}],"summary":"Bold, cleverly configured hatchback-cum-SUV was a trailblazer in 2021 but where does it stand today?"},{"name":"Ioniq 5 N","avgScore":1,"reviewCount":1,"reviews":[{"source":"Autocar","score":"10/10","normalised":1,"url":"https://www.autocar.co.uk/car-review/hyundai/ioniq-5-n"},{"source":"Auto Express","score":null,"normalised":null},{"source":"Parkers","score":null,"normalised":null}],"summary":"Is this self-styled 'corner rascal' the driver's EV we've been waiting for?"},{"name":"Ioniq 6","avgScore":0.78,"reviewCount":3,"reviews":[{"source":"Autocar","score":"7/10","normalised":0.7,"url":"https://www.autocar.co.uk/car-review/hyundai/ioniq-6"},{"source":"Auto Express","score":"4/5","normalised":0.8,"url":"https://www.autoexpress.co.uk/hyundai/ioniq-6"},{"source":"Parkers","score":"4.2/5","normalised":0.84,"url":"https://www.parkers.co.uk/hyundai/ioniq-6/saloon/review/"}],"summary":"A distinctive electric saloon with excellent range, rapid charging and a spacious, airy interior."},{"name":"Ioniq 9","avgScore":0.8,"reviewCount":2,"reviews":[{"source":"Autocar","score":"8/10","normalised":0.8,"url":"https://www.autocar.co.uk/car-review/hyundai/ioniq-9"},{"source":"Auto Express","score":"4/5","normalised":0.8,"url":"https://www.autoexpress.co.uk/hyundai/ioniq-9"},{"source":"Parkers","score":null,"normalised":null}],"summary":"Korean firm's new seven-seat electric flagship majors on practicality and long-distance refinement."},{"name":"Tucson","avgScore":0.83,"reviewCount":3,"reviews":[{"source":"Autocar","score":"8/10","normalised":0.8,"url":"https://www.autocar.co.uk/car-review/hyundai/tucson"},{"source":"Auto Express","score":"4.5/5","normalised":0.9,"url":"https://www.autoexpress.co.uk/hyundai/tucson"},{"source":"Parkers","score":"4/5","normalised":0.8,"url":"https://www.parkers.co.uk/hyundai/tucson/suv/review/"}],"summary":"Despite the thousands on the road, the Tucson still stands out — a stylish and well-equipped family SUV with strong hybrid efficiency."},{"name":"Santa Fe","avgScore":0.8,"reviewCount":3,"reviews":[{"source":"Autocar","score":"8/10","normalised":0.8,"url":"https://www.autocar.co.uk/car-review/hyundai/santa-fe"},{"source":"Auto Express","score":"4/5","normalised":0.8,"url":"https://www.autoexpress.co.uk/hyundai/santa-fe"},{"source":"Parkers","score":"4/5","normalised":0.8,"url":"https://www.parkers.co.uk/hyundai/santa-fe/suv/review/"}],"summary":"Hyundai's seven-seat SUV embraces boxy design and goes hybrid-only — a big, practical family hauler with premium ambitions."},{"name":"Kona","avgScore":0.83,"reviewCount":3,"reviews":[{"source":"Autocar","score":"8/10","normalised":0.8,"url":"https://www.autocar.co.uk/car-review/hyundai/kona"},{"source":"Auto Express","score":"4.5/5","normalised":0.9,"url":"https://www.autoexpress.co.uk/hyundai/kona"},{"source":"Parkers","score":"3.9/5","normalised":0.78,"url":"https://www.parkers.co.uk/hyundai/kona/suv/review/"}],"summary":"A well-rounded small SUV available as EV or hybrid — smart tech, good looks, though some reviewers find base specs light on features."},{"name":"Bayon","avgScore":0.69,"reviewCount":3,"reviews":[{"source":"Autocar","score":"7/10","normalised":0.7,"url":"https://www.autocar.co.uk/car-review/hyundai/bayon"},{"source":"Auto Express","score":"3.5/5","normalised":0.7,"url":"https://www.autoexpress.co.uk/hyundai/bayon"},{"source":"Parkers","score":"3.3/5","normalised":0.66,"url":"https://www.parkers.co.uk/hyundai/bayon/suv/review/"}],"summary":"A budget-friendly urban crossover with strong styling, though it trails class leaders for ride quality and driving engagement."},{"name":"i30","avgScore":0.7,"reviewCount":3,"reviews":[{"source":"Autocar","score":"7/10","normalised":0.7,"url":"https://www.autocar.co.uk/car-review/hyundai/i30"},{"source":"Auto Express","score":"3.5/5","normalised":0.7,"url":"https://www.autoexpress.co.uk/hyundai/i30"},{"source":"Parkers","score":"3.5/5","normalised":0.7,"url":"https://www.parkers.co.uk/hyundai/i30/hatchback/review/"}],"summary":"A competent family hatchback that matches rivals on space and equipment, but lacks the driving character of the best in class."},{"name":"i20","avgScore":0.7,"reviewCount":3,"reviews":[{"source":"Autocar","score":"8/10","normalised":0.8,"url":"https://www.autocar.co.uk/car-review/hyundai/i20"},{"source":"Auto Express","score":"3.5/5","normalised":0.7,"url":"https://www.autoexpress.co.uk/hyundai/i20"},{"source":"Parkers","score":"3/5","normalised":0.6,"url":"https://www.parkers.co.uk/hyundai/i20/hatchback/review/"}],"summary":"The i20 is stylish and well-equipped for its class, though reviewers are split — Autocar rates it highly while Parkers finds it merely average against Polo and Fiesta alternatives."},{"name":"i10","avgScore":0.8,"reviewCount":3,"reviews":[{"source":"Autocar","score":"8/10","normalised":0.8,"url":"https://www.autocar.co.uk/car-review/hyundai/i10"},{"source":"Auto Express","score":"4/5","normalised":0.8,"url":"https://www.autoexpress.co.uk/hyundai/i10"},{"source":"Parkers","score":"4/5","normalised":0.8,"url":"https://www.parkers.co.uk/hyundai/i10/hatchback/review/"}],"summary":"One of the best city cars on sale — surprisingly roomy inside, easy to drive, and well-built for its price. Consistently rated near the top of its class."},{"name":"Inster","avgScore":0.8,"reviewCount":2,"reviews":[{"source":"Autocar","score":"8/10","normalised":0.8,"url":"https://www.autocar.co.uk/car-review/hyundai/inster"},{"source":"Auto Express","score":"4/5","normalised":0.8,"url":"https://www.autoexpress.co.uk/hyundai/inster"},{"source":"Parkers","score":null,"normalised":null}],"summary":"Tiny on the outside, big on the inside — the Inster brings a clever and characterful approach to the affordable EV city car segment."}];
+
+let sortMode = 'score';
+
+function scoreColor(n) {
+  if (n >= 0.85) return 'great';
+  if (n >= 0.75) return 'good';
+  if (n >= 0.65) return 'ok';
+  return 'weak';
+}
+
+function barColor(n) {
+  if (n >= 0.85) return '#22c55e';
+  if (n >= 0.75) return '#86efac';
+  if (n >= 0.65) return '#f59e0b';
+  return '#ef4444';
+}
+
+function displayScore(n) {
+  return (n * 10).toFixed(1);
+}
+
+function render() {
+  const data = [...DATA];
+  if (sortMode === 'score') data.sort((a, b) => (b.avgScore || 0) - (a.avgScore || 0));
+  if (sortMode === 'name') data.sort((a, b) => a.name.localeCompare(b.name));
+  if (sortMode === 'reviews') data.sort((a, b) => b.reviewCount - a.reviewCount);
+
+  const container = document.getElementById('cards');
+  container.innerHTML = data.map((car, i) => {
+    const score = car.avgScore;
+    const displayS = score !== null ? displayScore(score) : '–';
+    const cls = score !== null ? scoreColor(score) : '';
+    const pct = score !== null ? (score * 100).toFixed(1) : 0;
+    const color = score !== null ? barColor(score) : '#444';
+
+    const chips = car.reviews.map(r => {
+      if (!r.score && !r.url) return `<span class="source-chip na"><span class="src-name">${r.source}</span><span class="src-score">–</span></span>`;
+      if (!r.score && r.url) return `<a href="${r.url}" target="_blank" class="source-chip na"><span class="src-name">${r.source}</span><span class="src-score">–</span></a>`;
+      return `<a href="${r.url}" target="_blank" class="source-chip"><span class="src-name">${r.source}</span><span class="src-score">${r.score}</span></a>`;
+    }).join('');
+
+    return `
+    <div class="card">
+      <div class="card-top">
+        <div>
+          <div class="car-name">Hyundai ${car.name}</div>
+          <div class="rank">#${i+1} of ${data.length}</div>
+        </div>
+        <div class="score-block">
+          <div class="score-big ${cls}">${displayS}</div>
+          <div class="score-label">out of 10</div>
+        </div>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar" style="width:${pct}%;background:${color}"></div>
+      </div>
+      ${car.summary ? `<p class="summary">"${car.summary.trim().replace(/[\r\n]+/g,' ')}"</p>` : ''}
+      <div class="source-scores">
+        ${chips}
+        <span class="review-count">${car.reviewCount} source${car.reviewCount !== 1 ? 's' : ''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function sort(mode) {
+  sortMode = mode;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(mode === 'score' ? 'score' : mode === 'name' ? 'name' : 'most')));
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
