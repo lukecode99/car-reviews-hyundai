@@ -95,9 +95,19 @@
   }
   .card:hover { border-color: rgba(61,107,255,0.35); transform: translateY(-1px); }
   .card-top {
-    display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap;
+    display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap;
     margin-bottom: 14px;
   }
+  .mfr-logo {
+    flex-shrink: 0;
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #002c5f;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .mfr-logo img { width: 32px; height: auto; display: block; }
   .car-name { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; flex: 1; min-width: 120px; }
   .rank { color: var(--muted); font-size: 13px; font-weight: 700; margin-top: 2px; }
   .score-block { text-align: right; flex-shrink: 0; }
@@ -180,9 +190,11 @@
 
 <header>
   <div class="brand">
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-      <rect width="32" height="32" rx="8" fill="rgba(255,255,255,0.12)"/>
-      <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="14" font-weight="800">H</text>
+    <svg width="52" height="34" viewBox="0 0 34 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="17" cy="11" rx="17" ry="11" fill="rgba(255,255,255,0.15)"/>
+      <path d="M7.5 15.5 C9.2 10.5 10.2 8.5 12 6.5 C12.5 6 13 5.8 13.5 6.2 L15.5 9.5 C14.2 10.8 13.2 12.2 12.5 13.8 Z" fill="white"/>
+      <path d="M26.5 6.5 C24.8 11.5 23.8 13.5 22 15.5 C21.5 16 21 16.2 20.5 15.8 L18.5 12.5 C19.8 11.2 20.8 9.8 21.5 8.2 Z" fill="white"/>
+      <path d="M14 10.2 C15 9 16 8.2 17 8 C18 8.2 19 9 20 10.2 L18.8 12 C18.2 11.3 17.6 10.8 17 10.6 C16.4 10.8 15.8 11.3 15.2 12 Z" fill="white"/>
     </svg>
     <h1>Hyundai Reviews</h1>
   </div>
@@ -256,6 +268,14 @@ function render() {
     return `
     <div class="card">
       <div class="card-top">
+        <div class="mfr-logo" title="Hyundai">
+          <svg width="34" height="22" viewBox="0 0 34 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="17" cy="11" rx="17" ry="11" fill="#002c5f"/>
+            <path d="M7.5 15.5 C9.2 10.5 10.2 8.5 12 6.5 C12.5 6 13 5.8 13.5 6.2 L15.5 9.5 C14.2 10.8 13.2 12.2 12.5 13.8 Z" fill="white"/>
+            <path d="M26.5 6.5 C24.8 11.5 23.8 13.5 22 15.5 C21.5 16 21 16.2 20.5 15.8 L18.5 12.5 C19.8 11.2 20.8 9.8 21.5 8.2 Z" fill="white"/>
+            <path d="M14 10.2 C15 9 16 8.2 17 8 C18 8.2 19 9 20 10.2 L18.8 12 C18.2 11.3 17.6 10.8 17 10.6 C16.4 10.8 15.8 11.3 15.2 12 Z" fill="white"/>
+          </svg>
+        </div>
         <div>
           <div class="car-name">Hyundai ${car.name}</div>
           <div class="rank">#${i+1} of ${data.length}</div>
